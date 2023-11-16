@@ -17,7 +17,6 @@ const port = process.env.PORT || 3000
 
 const DB = process.env.DATABASE
 
-console.log(" _ _ _ _ _", DB)
 
 mongoose.connect(DB, {
     useNewUrlParser: true,

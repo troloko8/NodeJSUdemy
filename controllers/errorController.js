@@ -56,7 +56,6 @@ module.exports = (err, req, res, next) => {
 
         let error = JSON.parse(JSON.stringify(err))
 
-        // console.log("_ _ _ _ _ _ _ __ ___:", error.name === 'ValidationError')
 
         if (error.name === 'CastError') error = handleCastErrorDB(error)
         if (error.code === 11000) error = handleDuplicateFieldsDB(error)

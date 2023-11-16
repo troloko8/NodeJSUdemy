@@ -5,11 +5,17 @@ const {
     getUser,
     updateUser,
     deleteUser
-} = require(`./../controllers/userController.js`)
+} = require(`../controllers/userController`)
+const { signup } = require(`../controllers/authController`)
 
 
 const router = express.Router()
-console.log(checkBody)
+
+router
+    .route('/signup')
+    .post(signup)
+// .post('/signup', authController.signup)
+
 router
     .route('/')
     .get(getAllUsers)
@@ -20,3 +26,6 @@ router
     .get(getUser)
     .patch(updateUser)
     .delete(deleteUser)
+
+
+module.exports = router
