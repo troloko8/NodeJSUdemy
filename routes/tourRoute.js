@@ -10,6 +10,7 @@ const {
     getTourStats,
     getMonthlyPlan,
 } = require(`./../controllers/tourController.js`)
+const { protect } = require(`./../controllers/authController.js`)
 // } = require(`${__dirname}/../controllers/tourController.js`)
 
 const router = express.Router()
@@ -30,7 +31,7 @@ router
 
 router
     .route('/')
-    .get(getAlltours)
+    .get(protect, getAlltours)
     .post(checkBody, createTour)
 
 // app.get('/api/v1/tours', getAlltours)
