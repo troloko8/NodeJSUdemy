@@ -120,8 +120,6 @@ exports.deleteTour = catchAsync(async (req, res, next) => {
 
     // const tours = await Tour.find()
 
-    // console.log(tours)
-
     if (!tour) {
         return next(new AppError(new Error('No tour found with that ID', 404)))
     }

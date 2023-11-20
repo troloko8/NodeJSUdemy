@@ -94,6 +94,17 @@ exports.protect = catchAsync((async (req, res, next) => {
 
     //GRANT ACCES TO PROTECTED ROUTE
     req.user = freshUser
-
     next()
 }))
+
+
+exports.restrictTo = (...roles) => {
+    return (req, res, next) => {
+        console.log(!roles.includes(req.user.role))
+        if (!roles.includes(req.user.role)) {
+            return next( new AppError("You don't have permission to do this action", 403)) // 403 means forbidden
+        }
+
+        next()
+    }
+}
