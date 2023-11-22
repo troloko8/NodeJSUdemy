@@ -103,17 +103,26 @@ exports.restrictTo = (...roles) => {
     return (req, res, next) => {
         console.log(!roles.includes(req.user.role))
         if (!roles.includes(req.user.role)) {
-            return next( new AppError("You don't have permission to do this action", 403)) // 403 means forbidden
+            return next(new AppError("You don't have permission to do this action", 403)) // 403 means forbidden
         }
 
         next()
     }
 }
 
-exports.forgotPassword = async (req, res, next) => {
-    const resetToken = '231232131'
-    // 3) send an email
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+    // 1) get user based on Posted email
+    const user = await User.findOne({ email: req.body.email })
 
+    if (!user) {
+        return next(new AppError("There is no user with this email adress"), 404)
+    }
+    // 2) gen random token
+
+    const resetToken = user.createPasswordResetToke()
+    user.save({ validateBeforeSave: false }) // disable all validtion in this Schema
+
+    // 3) send email with this token
     const resetURL = `${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${resetToken}`
 
     const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to ${resetURL} \nIf you didn't forget your password please ignore this email`
@@ -128,7 +137,7 @@ exports.forgotPassword = async (req, res, next) => {
         user.passwordResetToken = undefined
         user.passwordResetExpires = undefined
 
-        await user.save({validateBeforeSave: false})
+        await user.save({ validateBeforeSave: false })
 
         return next(new AppError("There was an error sending the email. Try again later", 500))
     }
@@ -138,4 +147,7 @@ exports.forgotPassword = async (req, res, next) => {
         status: 'succes',
         message: "Token send to email"
     })
-}
+
+})
+
+exports.resetPassword = (req, res, next) => { }
