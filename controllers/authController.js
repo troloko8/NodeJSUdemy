@@ -102,9 +102,28 @@ exports.restrictTo = (...roles) => {
     return (req, res, next) => {
         console.log(!roles.includes(req.user.role))
         if (!roles.includes(req.user.role)) {
-            return next( new AppError("You don't have permission to do this action", 403)) // 403 means forbidden
+            return next(new AppError("You don't have permission to do this action", 403)) // 403 means forbidden
         }
 
         next()
     }
 }
+
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+    // 1) get user based on Posted email
+    const user = await User.findOne({ email: req.body.email })
+
+    if (!user) {
+        return next(new AppError("There is no user with this email adress"), 404)
+    }
+    // 2) gen random token
+
+    const resetToken = user.createPasswordResetToke()
+    user.save({ validateBeforeSave: false }) // disable all validtion in this Schema
+
+    // 3) send email with this token
+
+    // next()
+})
+
+exports.resetPassword = (req, res, next) => { }
