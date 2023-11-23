@@ -158,14 +158,12 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
         .update(req.params.token)
         .digest('hex')
 
-    console.log(new Date().toISOString())
 
     const user = await User.findOne({
         passwordResetToken: hashedToken,
         passwordResetExpires: { $gt: Date.now() }
         // passwordResetExpires: { $gt: new Date() }
     })
-    console.log({ user })
 
     // 2) If token has not expired and there is user, set the new password
     if (!user) {
@@ -177,7 +175,8 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     user.passwordResetToken = undefined
     user.passwordResetExpires = undefined
 
-    await user.update()
+    await user.save()
+    // await user.update({validateBeforeSave: true})
     // 3) Update changedPasswordAt property for the current user
 
     // 4) Log the user in send JWT
@@ -186,9 +185,6 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
     res.status(201).json({
         status: 'succes',
-        token,
-        data: {
-            user: user
-        }
+        token
     })
 })

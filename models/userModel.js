@@ -21,7 +21,7 @@ const userSchema = mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['user', 'guide', 'lead-guide', 'lead'],
+        enum: ['user', 'guide', 'lead-guide', 'lead', 'admin'],
         default: 'user'
     },
     password: {
@@ -36,6 +36,7 @@ const userSchema = mongoose.Schema({
         validate: {
             // THIS JUST WORK ON SAVE / CREATE!!!
             validator: function (el) {
+                console.log(" _ _ __ _ _ _ _ VALIDATOR PASS:", el === this.password)
                 return el === this.password
             },
             message: "Password are not the same "
@@ -44,6 +45,12 @@ const userSchema = mongoose.Schema({
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
+})
+userSchema.pre('save', function(next) {
+    if (this.isModified('password') || this.isNew) return next()
+    
+    this.passwordChangedAt = Date.now() - 1000
+    next( )
 })
 
 userSchema.pre('save', async function (next) {
