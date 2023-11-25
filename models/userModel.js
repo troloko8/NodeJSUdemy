@@ -36,11 +36,15 @@ const userSchema = mongoose.Schema({
         validate: {
             // THIS JUST WORK ON SAVE / CREATE!!!
             validator: function (el) {
-                console.log(" _ _ __ _ _ _ _ VALIDATOR PASS:", el === this.password)
                 return el === this.password
             },
             message: "Password are not the same "
         }
+    },
+    active: {
+        type: Boolean,
+        default: true,
+        select: false
     },
     passwordChangedAt: Date,
     passwordResetToken: String,
@@ -60,6 +64,12 @@ userSchema.pre('save', async function (next) {
 
     this.password = await bcrypt.hash(this.password, 12)
     this.passwordConfirm = undefined
+
+    next()
+})
+
+userSchema.pre(/^find/, function(next) {
+    this.find({active: {$ne: false }})
 
     next()
 })

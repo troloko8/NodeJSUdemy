@@ -17,6 +17,16 @@ function signToken(id) {
 function createSendToken(user, statusCode, res) {
     const token = signToken(user._id)
 
+    //this cookies can be just stored, recieve and send back to server
+    res.cookie('jwt', token, {
+        expires: new Date(Date.now() + (process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000)),
+        secure: process.env.NODE_ENV !== 'development', // will only be send just if connection is HTTPS
+        httpOnly: true // make that cookies can't be modified or accesed in any way
+    })
+
+    //romove paasword from output
+    user.password = undefined
+
     res.status(statusCode).json({
         status: 'succes',
         token,
