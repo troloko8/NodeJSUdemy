@@ -14,6 +14,17 @@ function signToken(id) {
         { expiresIn: process.env.JWT_EXPIRES_IN })
 }
 
+function createSendToken(user, statusCode, res) {
+    const token = signToken(user._id)
+
+    res.status(statusCode).json({
+        status: 'succes',
+        token,
+        data: {
+            user
+        }
+    })
+}
 
 exports.signup = catchAsync((async (req, res, next) => {
     // const newUser = await User.create(req.body)
@@ -26,15 +37,8 @@ exports.signup = catchAsync((async (req, res, next) => {
         passwordChangedAt: req.body.passwordChangedAt
     })
 
-    const token = signToken(newUser._id)
 
-    res.status(201).json({
-        status: 'succes',
-        token,
-        data: {
-            user: newUser
-        }
-    })
+    createSendToken(newUser, 201, res)
 }))
 
 
@@ -55,13 +59,7 @@ exports.login = catchAsync((async (req, res, next) => {
         return next(new AppError('Incorrect email or password', 401)) //401 meeans unauthorize
     }
 
-    const token = signToken(user._id)
-
-
-    res.status(404).json({
-        status: 'succes',
-        token
-    })
+    createSendToken(user, 200, res)
 }))
 
 exports.protect = catchAsync((async (req, res, next) => {
@@ -170,21 +168,40 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
         next(new AppError("Token is invalid or has expired", 400))
     }
 
+    // 3) Update changedPasswordAt property for the current user
     user.password = req.body.password
     user.passwordConfirm = req.body.passwordConfirm
     user.passwordResetToken = undefined
     user.passwordResetExpires = undefined
 
     await user.save()
-    // await user.update({validateBeforeSave: true})
-    // 3) Update changedPasswordAt property for the current user
 
     // 4) Log the user in send JWT
 
-    const token = signToken(user._id)
+    createSendToken(user, 200, res)
+})
 
-    res.status(201).json({
-        status: 'succes',
-        token
-    })
+exports.updatePassword = catchAsync(async (req, res, next) => {
+    // 1) Get user from collection
+    const user = await User
+        .findOne({_id: req.user.id})
+        .select('+password')
+    // const user = req.user // from pretect 
+    const { curPassword, password, passwordConfirm} = req.body
+
+    // 2) Check if POSTed user password is correct
+    if (!(await user.correctPassword(curPassword, user.password))) {
+        next( new AppError("Your current password is wrong", 401))
+    } else if (curPassword === password) {
+        next(new AppError("A new password should not be as previous one", 400))
+    }
+
+    // 3) if so update password
+        user.password = password
+        user.passwordConfirm = passwordConfirm
+
+        await user.save()
+
+    // 4) Log user in and send JWT token
+    createSendToken(user, 200, res)
 })
