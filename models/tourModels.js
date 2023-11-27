@@ -2,6 +2,8 @@ const mongoose = require('mongoose')
 const slugify = require('slugify')
 const validator = require('validator')
 
+const User = require('./userModel')
+
 //create schema for tour collection
 const tourSchema = new mongoose.Schema({
     name: {
@@ -101,6 +103,14 @@ const tourSchema = new mongoose.Schema({
             description: String,
             day: Number
         }
+    ],
+    // EMBEDED
+    // guides: Array 
+    guides: [
+        {
+            type: mongoose.Schema.ObjectId,
+            ref: 'User'
+        }
     ]
 }, {
     toJSON: { virtuals: true }, // opt param in order to virutals data come togather with response
@@ -122,11 +132,25 @@ tourSchema.pre('save', function (next) { //runs fefore.save event
     next()
 })
 
-tourSchema.pre('save', function (next) {
-    console.log('will save doc....')
+tourSchema.pre(/^find/, function(next) {
+    this.populate({
+        path: 'guides',
+        select: '-__v -passwordChangedAt'
+    }) // makes a reference to the idies in rhis object
 
     next()
 })
+
+// EMBEDDED  referencing aproach
+// tourSchema.pre('save', async function(next) {
+//     const guidePromises =  this.guides.map(async id =>  await User.findById(id))
+
+//     this.guides = await Promise.all(guidePromises)
+
+//     console.log()
+
+//     next()
+// })
 
 tourSchema.post('save', function (doc, next) { //runs fefore.save event
     console.log('post: ', doc)
