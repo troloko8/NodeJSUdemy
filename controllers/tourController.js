@@ -33,8 +33,8 @@ exports.checkBody = (req, res, next) => {
 exports.getTour = catchAsync(async (req, res, next) => {
     console.log(" _ _ _ __ HERE")
     const tour = await Tour
-    .findById(req.params.id)
-    .populate('reviews')
+        .findById(req.params.id)
+        .populate({path: 'reviews'})
 
     console.log(" _ __ _ NEXT")
 
