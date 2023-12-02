@@ -11,12 +11,16 @@ const {
     getMonthlyPlan,
 } = require(`./../controllers/tourController.js`)
 const { protect, restrictToByRole } = require(`./../controllers/authController.js`)
-const {createReview} = require(`./../controllers/reviewController.js`)
+// const {createReview} = require(`./../controllers/reviewController.js`) 
+const reviewRouter = require('./reviewRoute')
 // } = require(`${__dirname}/../controllers/tourController.js`)
 
 const router = express.Router()
 // PARAM it's a middleware that calls when using a URL with defined param in URL
 // router.param('id', checkID)
+
+// MOUNTING ROUTERS
+router.use('/:tourID/reviews', reviewRouter)
 
 router
     .route('/top-5-cheap')
@@ -46,12 +50,12 @@ router
     .delete(protect, restrictToByRole('admin', 'lead-guide'), deleteTour)
     //restrictToByRole('admin', 'lead-guide)
 
-router
-    .route('/:tourID/reviews')
-    .post(
-        protect,
-        restrictToByRole('user'),
-        createReview
-    )
+// router
+//     .route('/:tourID/reviews')
+//     .post(
+//         protect,
+//         restrictToByRole('user'),
+//         createReview
+//     )
 
 module.exports = router

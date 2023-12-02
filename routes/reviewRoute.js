@@ -8,7 +8,7 @@ const {
 const { protect, restrictToByRole } = require(`../controllers/authController.js`)
 
 
-const router = express.Router()
+const router = express.Router({mergeParams: true })
 
 router
     .route('/')
