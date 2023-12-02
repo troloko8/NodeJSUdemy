@@ -6,7 +6,8 @@ const {
     updateUser,
     deleteUser,
     updateMe,
-    deleteMe
+    deleteMe,
+    getMe
 } = require(`../controllers/userController`)
 const { 
     signup, 
@@ -14,28 +15,26 @@ const {
     forgotPassword, 
     resetPassword, 
     updatePassword,
-    protect
+    protect,
+    restrictToByRole
 } = require(`../controllers/authController`)
 
 
 const router = express.Router()
 
-router
-    .route('/signup')
-    .post(signup)
-// .post('/signup', authController.signup)
-
+router.post('signup', signup)
 router.post('/login', login)
-
 router.post('/forgotPassword', forgotPassword)
-
 router.patch('/resetPassword/:token', resetPassword)
 
-router.patch('/updateMyPassword', protect, updatePassword)
+router.use(protect)
 
-router.patch('/updateMe', protect, updateMe)
+router.patch('/updateMyPassword', updatePassword)
+router.patch('/updateMe', updateMe)
+router.delete('/deleteMe', deleteMe)
+router.get('/me', getMe, getUser)
 
-router.delete('/deleteMe', protect, deleteMe)
+router.use(restrictToByRole('admin'))
 
 router
     .route('/')

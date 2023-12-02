@@ -32,12 +32,20 @@ router
 
 router
     .route('/monthly-plan/:year')
-    .get(getMonthlyPlan)
+    .get(
+        protect, 
+        restrictToByRole('admin', 'lead-guide', 'guide'), 
+        getMonthlyPlan
+    )
 
 router
     .route('/')
-    .get(protect, getAlltours)
-    .post(checkBody, createTour)
+    .get(getAlltours)
+    .post(
+        protect, 
+        restrictToByRole('admin', 'lead-guide'), 
+        createTour
+    )
 
 // app.get('/api/v1/tours', getAlltours)
 // app.post('/api/v1/tours', createTour)
