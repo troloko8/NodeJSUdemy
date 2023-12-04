@@ -51,7 +51,7 @@ exports.createOne = Model => catchAsync(async (req, res, next) => {
 })
 
 exports.getOne = (Model, popOptions) => catchAsync(async (req, res, next) => {
-    const query  = Model.findById(req.params.id)
+    const query = Model.findById(req.params.id)
     if (popOptions) query.populate(popOptions)
     const doc = await query
 
@@ -72,7 +72,7 @@ exports.getOne = (Model, popOptions) => catchAsync(async (req, res, next) => {
 exports.getAll = Model => catchAsync(async (req, res, next) => {
     // to allow for nested GET revies on tour(hack)
     let filter = {}
-    if(req.params.tourID) filter = {tour: req.params.tourID}
+    if (req.params.tourID) filter = { tour: req.params.tourID }
 
     // EXECUTE A QUERY
     const features = new APIFeatures(Model.find(filter), req.query)
@@ -82,6 +82,7 @@ exports.getAll = Model => catchAsync(async (req, res, next) => {
         .paginate()
 
     const doc = await features.query
+    // const doc = await features.query.explain()// for indexes
 
     //SEND RESPONSE
     res.status(200).json({

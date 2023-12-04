@@ -118,6 +118,10 @@ const tourSchema = new mongoose.Schema({
 }
 )
 
+// tourSchema.index({ price: 1 })
+tourSchema.index({ price: 1, ratingAverage: -1 })
+tourSchema.index({ slug: 1 })
+
 // Virtual data it's data which will not be save in DB
 tourSchema.virtual('durationWeeks').get(function () {
     return this.duration / 7
@@ -126,7 +130,7 @@ tourSchema.virtual('durationWeeks').get(function () {
 // VIRTUAL POPULATE
 tourSchema.virtual('reviews', {
     ref: 'Review',
-    foreignField: 'tour', 
+    foreignField: 'tour',
     localField: '_id'
 })
 
@@ -139,7 +143,7 @@ tourSchema.pre('save', function (next) { //runs fefore.save event
     next()
 })
 
-tourSchema.pre(/^find/, function(next) {
+tourSchema.pre(/^find/, function (next) {
     this.populate({
         path: 'guides',
         select: '-__v -passwordChangedAt'
@@ -158,6 +162,7 @@ tourSchema.pre(/^find/, function(next) {
 
 //     next()
 // })
+
 
 tourSchema.post('save', function (doc, next) { //runs fefore.save event
     console.log('post: ', doc)
