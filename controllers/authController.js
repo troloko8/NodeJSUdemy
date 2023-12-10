@@ -101,7 +101,7 @@ exports.protect = catchAsync((async (req, res, next) => {
     if (freshUser.changedPasswordAfter(decodedToken.iat)) { // timestamp when was created this toke
         return (next(new AppError("User Recently changed password, please log in again", 401)))
     }
-
+    
     //GRANT ACCES TO PROTECTED ROUTE
     req.user = freshUser
     next()
