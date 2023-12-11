@@ -165,8 +165,6 @@ tourSchema.pre(/^find/, function (next) {
 
 
 tourSchema.post('save', function (doc, next) { //runs fefore.save event
-    console.log('post: ', doc)
-
     this.slug = slugify(this.name, { lower: true })
     next()
 })
