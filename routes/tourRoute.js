@@ -9,6 +9,7 @@ const {
     aliasTopTours,
     getTourStats,
     getMonthlyPlan,
+    getToursWithin,
 } = require(`./../controllers/tourController.js`)
 const { protect, restrictToByRole } = require(`./../controllers/authController.js`)
 // const {createReview} = require(`./../controllers/reviewController.js`) 
@@ -33,17 +34,21 @@ router
 router
     .route('/monthly-plan/:year')
     .get(
-        protect, 
-        restrictToByRole('admin', 'lead-guide', 'guide'), 
+        protect,
+        restrictToByRole('admin', 'lead-guide', 'guide'),
         getMonthlyPlan
     )
+
+router
+    .route('/tours-within/:distance/center/:latlng/unit/:unit')
+    .get(getToursWithin)
 
 router
     .route('/')
     .get(getAlltours)
     .post(
-        protect, 
-        restrictToByRole('admin', 'lead-guide'), 
+        protect,
+        restrictToByRole('admin', 'lead-guide'),
         createTour
     )
 
@@ -56,7 +61,7 @@ router
     .get(getTour)
     .patch(updateTour)
     .delete(protect, restrictToByRole('admin', 'lead-guide'), deleteTour)
-    //restrictToByRole('admin', 'lead-guide)
+//restrictToByRole('admin', 'lead-guide)
 
 // router
 //     .route('/:tourID/reviews')
