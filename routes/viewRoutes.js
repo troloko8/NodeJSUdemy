@@ -5,6 +5,6 @@ const router = express.Router()
 
 router.get('/', getOverview)
 
-router.get('/tour', getTour)
+router.get('/tour/:name', getTour)
 
 module.exports = router
