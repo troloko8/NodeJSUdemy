@@ -70,7 +70,7 @@ const tourSchema = new mongoose.Schema({
         type: String,
         required: [true, 'A tour must have a cove image']
     },
-    image: [String],
+    images: [String],
     createdAt: {
         type: Date,
         default: Date.now(),
@@ -122,7 +122,7 @@ const tourSchema = new mongoose.Schema({
 // tourSchema.index({ price: 1 })
 tourSchema.index({ price: 1, ratingAverage: -1 })
 tourSchema.index({ slug: 1 })
-tourSchema.index({ startLocation: '2dsphere' });
+tourSchema.index({ startLocation: '2dsphere' })
 
 
 // Virtual data it's data which will not be save in DB

@@ -37,6 +37,7 @@ const importData = async () => {
 
     process.exit()
 }
+//dev-data/data/import-dev-data.js'
 
 // DELETE ALL DATA FROM COLLECTION
 const deleteData = async () => {
