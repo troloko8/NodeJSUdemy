@@ -24,7 +24,7 @@ exports.getTour = catchAsync(async (req, res) => {
             path: 'reviews',
             fields: 'review rating user'
         })
-        
+
     // 2) Buld template
 
     // 3) Render template using data from step 1
@@ -32,7 +32,7 @@ exports.getTour = catchAsync(async (req, res) => {
     res
         .status(200)
         .render('tour', {
-            title: `${tour.name}`,
+            title: `${tour.name} Tour`,
             tour
         })
 })

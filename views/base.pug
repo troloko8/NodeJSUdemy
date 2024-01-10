@@ -1,17 +1,16 @@
 doctype html 
 html 
     head
-        title Natours | #{title}
-
-        meta(charset="UTF-8")
-        meta(name="viewport" content="width=device-width, initial-scale=1.0")
-
-        link(rel='stylesheet' href='/css/style.css')
-        link(rel='shortcut icon' type='image/png' href='/img/favicon.png')
-        link(
-            href="https://fonts.googleapis.com/css?family=Lato:300,300i,700"
-            rel="stylesheet"
-        )
+        block head
+            title Natours | #{title}
+            meta(charset="UTF-8")
+            meta(name="viewport" content="width=device-width, initial-scale=1.0")
+            link(rel='stylesheet' href='/css/style.css')
+            link(rel='shortcut icon' type='image/png' href='/img/favicon.png')
+            link(
+                href="https://fonts.googleapis.com/css?family=Lato:300,300i,700"
+                rel="stylesheet"
+            )
 
     body 
         // HEADER
@@ -22,8 +21,7 @@ html
             h1 Placehiolder Home Page
         //- main.main
         //-     .card-container
-        //-         .card
-        //-             .card__header
+         //-             .card__header
         //-                 .card__picture
         //-                     .card__picture-overlay &nbsp;
         //-                     img.card__picture-img(
@@ -36,3 +34,6 @@ html
 
         // FOOTER
         include _footer
+
+        script(src="/js/mapbox.js") 
+
