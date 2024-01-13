@@ -9,11 +9,11 @@ const {
     deleteMe,
     getMe
 } = require(`../controllers/userController`)
-const { 
-    signup, 
-    login, 
-    forgotPassword, 
-    resetPassword, 
+const {
+    signup,
+    login,
+    forgotPassword,
+    resetPassword,
     updatePassword,
     protect,
     restrictToByRole
@@ -22,7 +22,7 @@ const {
 
 const router = express.Router()
 
-router.post('signup', signup)
+router.post('/signup', signup)
 router.post('/login', login)
 router.post('/forgotPassword', forgotPassword)
 router.patch('/resetPassword/:token', resetPassword)
