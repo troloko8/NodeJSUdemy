@@ -78,6 +78,8 @@ exports.protect = catchAsync((async (req, res, next) => {
 
     if (auth && auth.startsWith('Bearer')) {
         token = auth.split(' ')[1]
+    } else if (req.cookies.jwt) {
+        token = req.cookies.jwt
     }
 
     if (!token) {
@@ -118,6 +120,31 @@ exports.restrictToByRole = (...roles) => {
         next()
     }
 }
+
+exports.isLoggedIn = catchAsync((async (req, res, next) => {
+    console.log(" _ __ req: _ _ _  ", req.cookies.jwt)
+    if (req?.cookies?.jwt) {
+        // 1) verify token
+        const decodedToken = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRET)
+
+        // 2) Check of the user exists
+        const freshUser = await User.findById(decodedToken.id)
+        if (!freshUser) {
+            return next()
+        }
+        
+        // 3) Check if user changed password after the token was issued
+        if (freshUser.changedPasswordAfter(decodedToken.iat)) { // timestamp when was created this toke
+            return next()
+        }
+        
+        //THERE IS LOGGIN USER
+        res.locals.user = freshUser // variable for pug views
+        // next()
+    }
+
+    next()
+}))
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
     // 1) get user based on Posted email

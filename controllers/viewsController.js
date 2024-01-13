@@ -18,7 +18,7 @@ exports.getOverview = catchAsync(async (req, res, next) => {
         })
 })
 
-exports.getTour = catchAsync(async (req, res) => {
+exports.getTour = catchAsync(async (req, res, next) => {
     // 1) get  data for the requested tour(inclusing reviews and guides)
         const tour = await Tour.findOne({slug: req.params.name}).populate({
             path: 'reviews',
@@ -35,4 +35,17 @@ exports.getTour = catchAsync(async (req, res) => {
             title: `${tour.name} Tour`,
             tour
         })
+})
+
+exports.getLoginForm = catchAsync( async (req, res, next) => {
+    res
+        .status(200)
+        .set(
+            'Content-Security-Policy',
+            "script-src 'self' https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js 'unsafe-inline' 'unsafe-eval';",
+        )
+        .render('login', {
+            title: `Login into your account`,
+        })
+        
 })
