@@ -1,1 +1,6 @@
 node_modules/
+.cache/
+.public/
+.public/js/
+public/js/bundle.js.map
+public/js/bundle.js

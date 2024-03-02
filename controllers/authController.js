@@ -47,7 +47,6 @@ exports.signup = catchAsync((async (req, res, next) => {
         passwordChangedAt: req.body.passwordChangedAt
     })
 
-
     createSendToken(newUser, 201, res)
 }))
 
@@ -71,6 +70,19 @@ exports.login = catchAsync((async (req, res, next) => {
 
     createSendToken(user, 200, res)
 }))
+
+exports.logout = (req, res) => {
+    res.cookie('jwt', 'loggedout', {
+        expires: new Date(Date.now() + 10 * 1000),
+        httpOnly: true // make that cookies can't be modified or accesed in any way
+    })
+
+    res
+        .status(200)
+        .json({
+            status: 'success'
+        })
+}
 
 exports.protect = catchAsync((async (req, res, next) => {
     const auth = req.headers.authorization
@@ -112,8 +124,8 @@ exports.protect = catchAsync((async (req, res, next) => {
 
 exports.restrictToByRole = (...roles) => {
     return (req, res, next) => {
-        console.log(!roles.includes(req.user.role))
         if (!roles.includes(req.user.role)) {
+            console.log("HERE")
             return next(new AppError("You don't have permission to do this action", 403)) // 403 means forbidden
         }
 
@@ -121,30 +133,34 @@ exports.restrictToByRole = (...roles) => {
     }
 }
 
-exports.isLoggedIn = catchAsync((async (req, res, next) => {
-    console.log(" _ __ req: _ _ _  ", req.cookies.jwt)
+exports.isLoggedIn = (async (req, res, next) => {
     if (req?.cookies?.jwt) {
-        // 1) verify token
-        const decodedToken = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRET)
+        try {
+            // 1) verify token
+            const decodedToken = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRET)
 
-        // 2) Check of the user exists
-        const freshUser = await User.findById(decodedToken.id)
-        if (!freshUser) {
-            return next()
+            // 2) Check of the user exists
+            const freshUser = await User.findById(decodedToken.id)
+            if (!freshUser) {
+                return next()
+            }
+            
+            // 3) Check if user changed password after the token was issued
+            if (freshUser.changedPasswordAfter(decodedToken.iat)) { // timestamp when was created this toke
+                return next()
+            }
+            
+            //THERE IS LOGGIN USER
+            res.locals.user = freshUser // variable for pug views
+
+            return next()   
+        } catch (error) {
+            return next()   
         }
-        
-        // 3) Check if user changed password after the token was issued
-        if (freshUser.changedPasswordAfter(decodedToken.iat)) { // timestamp when was created this toke
-            return next()
-        }
-        
-        //THERE IS LOGGIN USER
-        res.locals.user = freshUser // variable for pug views
-        // next()
     }
 
     next()
-}))
+})
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
     // 1) get user based on Posted email
