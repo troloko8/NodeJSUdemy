@@ -1,4 +1,5 @@
 const Tour = require('../models/tourModels')
+const AppError = require('../utils/AppError')
 const catchAsync = require('../utils/catchAsync')
 
 
@@ -25,6 +26,9 @@ exports.getTour = catchAsync(async (req, res, next) => {
             fields: 'review rating user'
         })
 
+    if (!tour) { 
+        return next(new AppError('There is no tour with that name', 404))
+    }
     // 2) Buld template
 
     // 3) Render template using data from step 1
@@ -49,3 +53,15 @@ exports.getLoginForm = catchAsync( async (req, res, next) => {
         })
         
 })
+
+exports.getAccount = (req, res) => {
+    res
+        .status(200)
+        // .set(
+        //     'Content-Security-Policy',
+        //     "script-src 'self' https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js 'unsafe-inline' 'unsafe-eval';",
+        // )
+        .render('account', {
+            title: `Login into your account`,
+        })
+}

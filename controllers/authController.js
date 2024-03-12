@@ -118,6 +118,10 @@ exports.protect = catchAsync((async (req, res, next) => {
 
     //GRANT ACCES TO PROTECTED ROUTE
     req.user = freshUser
+
+    //THERE IS LOGGIN USER
+    res.locals.user = freshUser // variable for pug views
+
     next()
 }))
 
@@ -125,7 +129,6 @@ exports.protect = catchAsync((async (req, res, next) => {
 exports.restrictToByRole = (...roles) => {
     return (req, res, next) => {
         if (!roles.includes(req.user.role)) {
-            console.log("HERE")
             return next(new AppError("You don't have permission to do this action", 403)) // 403 means forbidden
         }
 

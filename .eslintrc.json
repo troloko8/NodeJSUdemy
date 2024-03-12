@@ -16,6 +16,7 @@
       "never"
     ],
     "arrow-body-style": "off",
+    "no-lonely-if": "off",
     "prefer-object-spread": "off",
     "one-var": "off",
     "prefer-arrow-callback": "off",
