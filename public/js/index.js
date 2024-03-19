@@ -2,7 +2,7 @@
 import { login, logout } from './login'
 import '@babel/polyfill'
 
-const loginForm = document.querySelector('.form')
+const loginForm = document.querySelector('.form--login')
 const logoutBtn = document.querySelector('.nav__el--logout')
 
 if (loginForm)
