@@ -21,7 +21,7 @@ const userSchema = mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['user', 'guide', 'lead-guide', 'lead'],
+        enum: ['user', 'guide', 'lead-guide', 'lead', 'admin'],
         default: 'user'
     },
     password: {
@@ -41,9 +41,21 @@ const userSchema = mongoose.Schema({
             message: "Password are not the same "
         }
     },
+    active: {
+        type: Boolean,
+        default: true,
+        select: false
+    },
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
+})
+
+userSchema.pre('save', function (next) {
+    if (this.isModified('password') || this.isNew) return next()
+
+    this.passwordChangedAt = Date.now() - 1000
+    next()
 })
 
 userSchema.pre('save', async function (next) {
@@ -52,6 +64,12 @@ userSchema.pre('save', async function (next) {
 
     this.password = await bcrypt.hash(this.password, 12)
     this.passwordConfirm = undefined
+
+    next()
+})
+
+userSchema.pre(/^find/, function (next) {
+    this.find({ active: { $ne: false } })
 
     next()
 })
@@ -73,7 +91,7 @@ userSchema.methods.createPasswordResetToke = function () {
     const resetToken = crypto.randomBytes(32).toString('hex')
 
     this.passwordResetToken = crypto.createHash("sha256").update(resetToken).digest('hex')
-    this.passwordResetExpires = new Date() + 10 * 60 * 1000
+    this.passwordResetExpires = Date.now() + 10 * 60 * 1000
 
     console.log({ resetToken }, this.passwordResetToken)
 

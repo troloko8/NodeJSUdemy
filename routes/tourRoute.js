@@ -9,13 +9,20 @@ const {
     aliasTopTours,
     getTourStats,
     getMonthlyPlan,
+    getToursWithin,
+    getDistances,
 } = require(`./../controllers/tourController.js`)
-const { protect, restrictTo } = require(`./../controllers/authController.js`)
+const { protect, restrictToByRole } = require(`./../controllers/authController.js`)
+// const {createReview} = require(`./../controllers/reviewController.js`) 
+const reviewRouter = require('./reviewRoute')
 // } = require(`${__dirname}/../controllers/tourController.js`)
 
 const router = express.Router()
 // PARAM it's a middleware that calls when using a URL with defined param in URL
 // router.param('id', checkID)
+
+// MOUNTING ROUTERS
+router.use('/:tourID/reviews', reviewRouter)
 
 router
     .route('/top-5-cheap')
@@ -27,12 +34,28 @@ router
 
 router
     .route('/monthly-plan/:year')
-    .get(getMonthlyPlan)
+    .get(
+        protect,
+        restrictToByRole('admin', 'lead-guide', 'guide'),
+        getMonthlyPlan
+    )
+
+router
+    .route('/tours-within/:distances/center/:latlng/unit/:unit')
+    .get(getToursWithin)
+
+router
+    .route('/distance/latlng/:latlng/unit/:unit')
+    .get(getDistances)
 
 router
     .route('/')
-    .get(protect, getAlltours)
-    .post(checkBody, createTour)
+    .get(getAlltours)
+    .post(
+        protect,
+        restrictToByRole('admin', 'lead-guide'),
+        createTour
+    )
 
 // app.get('/api/v1/tours', getAlltours)
 // app.post('/api/v1/tours', createTour)
@@ -42,11 +65,15 @@ router
     .route('/:id')
     .get(getTour)
     .patch(updateTour)
-    .delete(protect, restrictTo('admin', 'lead-guide'), deleteTour)
-    //restrictTo('admin', 'lead-guide)
+    .delete(protect, restrictToByRole('admin', 'lead-guide'), deleteTour)
+//restrictToByRole('admin', 'lead-guide)
 
-// app.get('/api/v1/tours/:id', getTour)
-// app.patch('/api/v1/tours/:id', updateTour)
-// app.delete('/api/v1/tours/:id', deleteTour)
+// router
+//     .route('/:tourID/reviews')
+//     .post(
+//         protect,
+//         restrictToByRole('user'),
+//         createReview
+//     )
 
 module.exports = router
