@@ -1,4 +1,6 @@
 const express = require('express')
+const multer = require('multer')
+
 const {
     getAllUsers,
     createUser,
@@ -24,6 +26,7 @@ const {
 
 
 const router = express.Router()
+const upload = multer({dest: 'public/img/users'})
 
 router.post('/signup', signup)
 router.post('/login', login)
@@ -33,8 +36,8 @@ router.patch('/resetPassword/:token', resetPassword)
 
 router.use(protect)
 
-router.patch('/updateMe', uploadUserPhoto ,updateMe)
-router.patch('/updateMe', updateMe)
+router.patch('/updateMyPassword', updatePassword)
+router.patch('/updateMe', upload.single('photo'), updateMe)
 router.delete('/deleteMe', deleteMe)
 router.get('/me', getMe, getUser)
 
