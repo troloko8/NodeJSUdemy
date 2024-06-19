@@ -10,7 +10,8 @@ const {
     updateMe,
     deleteMe,
     getMe,
-    uploadUserPhoto
+    uploadUserPhoto,
+    resizeUserPhoto
 } = require(`../controllers/userController`)
 const {
     signup,
@@ -23,10 +24,7 @@ const {
     logout
 } = require(`../controllers/authController`)
 
-
-
 const router = express.Router()
-const upload = multer({dest: 'public/img/users'})
 
 router.post('/signup', signup)
 router.post('/login', login)
@@ -37,7 +35,11 @@ router.patch('/resetPassword/:token', resetPassword)
 router.use(protect)
 
 router.patch('/updateMyPassword', updatePassword)
-router.patch('/updateMe', upload.single('photo'), updateMe)
+router.patch('/updateMe', 
+    uploadUserPhoto, 
+    resizeUserPhoto, 
+    updateMe
+)
 router.delete('/deleteMe', deleteMe)
 router.get('/me', getMe, getUser)
 
