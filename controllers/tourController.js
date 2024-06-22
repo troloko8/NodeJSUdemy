@@ -1,3 +1,5 @@
+const multer = require('multer')
+const sharp = require('sharp')
 const Tour = require('../models/tourModels')
 const AppError = require('../utils/AppError')
 const catchAsync = require('../utils/catchAsync')
@@ -18,8 +20,38 @@ const factory = require('./handlerFactory')
 //     next()
 // }
 
+
+const multerStorage = multer.memoryStorage()
+
+const multerFilter = (req, file, cb) => {
+    if (file.mimetype.startsWith('image')) {
+        cb(null, true)
+    } else {
+        cb(new AppError('Not an image! Please upload only images.', 400), false)
+    }
+}
+
+const upload = multer({
+    storage: multerStorage,
+    fileFilter: multerFilter
+})
+
+exports.uploadTourImages = upload.fields([
+    {name: 'imageCover', maxCount: 1},
+    {name: 'images', maxCount: 3}
+])
+
+// as example
+// upload.single('image') // - req.file
+// upload.array('images', 5) // - req.files
+
+exports.resizeTourImages= (req, res, next) => {
+    console.log(req.files)
+
+    next()
+}
+
 exports.checkBody = (req, res, next) => {
-    console.log("Check: ", req.body)
     if (((req.body.name ?? '') === '') || ((req.body.price ?? 0) === 0)) {
         return res.status(404).json({
             status: 'fail',

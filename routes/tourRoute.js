@@ -11,6 +11,8 @@ const {
     getMonthlyPlan,
     getToursWithin,
     getDistances,
+    uploadTourImages,
+    resizeTourImages,
 } = require(`./../controllers/tourController.js`)
 const { protect, restrictToByRole } = require(`./../controllers/authController.js`)
 // const {createReview} = require(`./../controllers/reviewController.js`) 
@@ -64,7 +66,13 @@ router
 router
     .route('/:id')
     .get(getTour)
-    .patch(updateTour)
+    .patch(
+        protect, 
+        restrictToByRole('admin', 'lead-guide'), 
+        uploadTourImages,
+        resizeTourImages,
+        updateTour
+    )
     .delete(protect, restrictToByRole('admin', 'lead-guide'), deleteTour)
 //restrictToByRole('admin', 'lead-guide)
 
