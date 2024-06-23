@@ -182,11 +182,13 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     user.save({ validateBeforeSave: false }) // disable all validtion in this Schema
 
     // 3) send email with this token
-    const resetURL = `${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${resetToken}`
 
-    const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to ${resetURL} \nIf you didn't forget your password please ignore this email`
+    // const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to ${resetURL} \nIf you didn't forget your password please ignore this email`
 
     try {
+        const resetURL = `${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${resetToken}`
+
+        await new Email(user, resetURL).sendPasswordReset()
         // await sendEmail({
         //     email: user.email,
         //     subgect: "This link will be active dusting 19 minutes",
