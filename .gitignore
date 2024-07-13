@@ -4,3 +4,4 @@ node_modules/
 .public/js/
 public/js/bundle.js.map
 public/js/bundle.js
+*.env
