@@ -140,8 +140,6 @@ tourSchema.virtual('reviews', {
 // DOCUMENT MIDDLWARE: 
 
 tourSchema.pre('save', function (next) { //runs fefore.save event
-    console.log('pre: ', this)
-
     this.slug = slugify(this.name, { lower: true })
     next()
 })
@@ -161,7 +159,6 @@ tourSchema.pre(/^find/, function (next) {
 
 //     this.guides = await Promise.all(guidePromises)
 
-//     console.log()
 
 //     next()
 // })
@@ -182,11 +179,9 @@ tourSchema.pre(/^find/, function (next) {// means before all comands which start
     next()
 })
 
-tourSchema.post(/^find/, function (docs, next) {
-    console.log("time of executing: ", new Date() - this.dateStart, ' ms')
-
-    next()
-})
+// tourSchema.post(/^find/, function (docs, next) {
+//     next()
+// })
 
 // AGGREGATION MIDDLWARE
 // BUG this code is blocks geaNear because geoNear have to be first in pipline

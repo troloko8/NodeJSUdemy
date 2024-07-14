@@ -3,7 +3,6 @@ const APIFeatures = require("../utils/apiFeatures")
 const catchAsync = require("../utils/catchAsync")
 
 exports.deleteOne = Model => catchAsync(async (req, res, next) => {
-    console.log(req.params.id)
     const modelDoc = await Model.findByIdAndDelete(req.params.id)
 
     // const tours = await Tour.find()
@@ -21,7 +20,6 @@ exports.deleteOne = Model => catchAsync(async (req, res, next) => {
 })
 
 exports.updateOne = Model => catchAsync(async (req, res, next) => {
-    console.log(req.body)
     const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
         new: true, // for returning updated item,
         runValidators: true

@@ -5,7 +5,7 @@ const dotenv = require('dotenv')// for configurate our dev/prod environment vari
 
 process.on('uncaughtExeption', err => {
     console.log(err.name, err.message)
-    console.log('UNCAUGHT EXEPTION!')
+    console.log('____ ____ ___UNCAUGHT EXEPTION!')
     process.exit(1)
 })
 
@@ -35,7 +35,7 @@ const server = app.listen(port, () => {
 
 process.on('unhandledRejection', err => {
     console.log(err.name, err.message)
-    console.log('UNHANDLELING REJECTION!')
+    console.log('____ ____ ___UNHANDLELING REJECTION!')
 
     server.close(() => {
         process.exit(1)
