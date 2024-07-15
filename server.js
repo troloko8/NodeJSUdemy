@@ -41,3 +41,11 @@ process.on('unhandledRejection', err => {
         process.exit(1)
     })
 })
+
+process.on('SICTERM', () => {
+    console.log("SICTERM RECIVED. Shuttin down gracefully")
+
+    server.close(() => {
+        console.log(':D process terminated')
+    })
+})
