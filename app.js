@@ -22,18 +22,6 @@ const app = express()
 app.set('view engine', 'pug')
 app.set('views', path.join(__dirname, 'views'))
 
-app.use(
-    session({
-        secret: process.env.SESSION_SECRET || 'Super Secret (change it)',
-        resave: true,
-        saveUninitialized: false,
-        cookie: {
-            sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax', // must be 'none' to enable cross-site delivery
-            secure: process.env.NODE_ENV === "production", // must be true if sameSite='none'
-        }
-    })
-)
-
 // Serving static files
 // app.use(express.static(`${__dirname}/public`)) // sets up a new root folder for URL row // work for static files
 app.use(express.static(path.join(__dirname, 'public'))) // sets up a new root folder for URL row // work for static files
