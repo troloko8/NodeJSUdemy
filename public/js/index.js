@@ -11,8 +11,12 @@ const userPasswordForm = document.querySelector('.form-user-settings')
 const bookBtn = document.querySelector('#book-tour')
 
 
+console.log(loginForm)
+
 if (loginForm)
 loginForm.addEventListener('submit', e => {
+    debugger
+    console.log(e)
     e.preventDefault()
     const email = document.getElementById('email').value
     const password = document.getElementById('password').value
