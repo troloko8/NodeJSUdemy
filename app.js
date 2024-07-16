@@ -8,6 +8,7 @@ const xss = require('xss-clean')
 const hpp = require('hpp')
 const cookieParser = require('cookie-parser')
 const compression = require('compression')
+const cors = require('cors')
 
 const AppError = require(`./utils/AppError`)
 const errorHandler = require('./controllers/errorController')
@@ -16,6 +17,7 @@ const userRouter = require(`./routes/userRoute`)
 const reviewRouter = require(`./routes/reviewRoute`)
 const viewRouter = require(`./routes/viewRoutes`)
 const bookingRouter = require(`./routes/bookingRoutes`)
+
 
 const app = express()
 
@@ -29,6 +31,17 @@ app.set('views', path.join(__dirname, 'views'))
 app.use(express.static(path.join(__dirname, 'public'))) // sets up a new root folder for URL row // work for static files
 
 // 1)GLOBAL MIDDLWARES
+// Implement CORS
+app.use(cors()) // Acces-Control-Allow-Origin all 
+// examaple: api.natours.com (main) natours.com(FrontEnd) solution: 
+// app.use(cors({
+//     origin: 'https://www.natours.com'
+// }))
+
+
+app.options('*', cors()) // for non -simple request (PUT/PATCH/DELETE) which will be send in preflight phase
+// app.options('/api/v1/tours/:id', cors()) //example for secific route
+
 // Set security HTTP headers
 app.use(helmet())
 // Development log in
