@@ -17,7 +17,8 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
     const product = await stripe.products.create({
         name: `${tour.name} Tour`,
         description: tour.summary,
-        images: [`https://www.natours.dev/img/tours/${tour.imageCover}`],
+        images: [`${req.protocol}://${req.get('host')}/my-tours/img/tours/${tour.imageCover}`], // dev version
+        // images: [`https://www.natours.dev/img/tours/${tour.imageCover}`], // dev version
     })
 
     const price = await stripe.prices.create({
@@ -29,18 +30,42 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
     const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         success_url: `${req.protocol}://${req.get('host')}/my-tours`,
-        // success_url: `${req.protocol}://${req.get('host')}/?tour=${req.params.tourID}&user=${req.user.id}&price=${tour.price}`, // example checkout
         cancel_url: `${req.protocol}://${req.get('host')}/tour/${tour.slug}`,
         customer_email: req.user.email,
-        client_reference_id: req.params.tourID,
+        client_reference_id: req.params.tourId,
         mode: 'payment',
         line_items: [
             {
-                price: price.id,
                 quantity: 1,
+                price_data: {
+                    currency: 'usd',
+                    unit_amount: tour.price * 100,
+                    product_data: {
+                        name: `${tour.name} Tour`,
+                        description: tour.summary,
+                        images: [`${req.protocol}://${req.get('host')}/img/tours/${tour.imageCover}`],
+                    },
+                },
             },
-        ],
-    })
+            ],
+        })
+
+    //OUTDATED FOR DEPLOYED PROJ
+    // const session = await stripe.checkout.sessions.create({
+    //     payment_method_types: ['card'],
+    //     success_url: `${req.protocol}://${req.get('host')}/my-tours`,
+    //     // success_url: `${req.protocol}://${req.get('host')}/?tour=${req.params.tourID}&user=${req.user.id}&price=${tour.price}`, // example checkout
+    //     cancel_url: `${req.protocol}://${req.get('host')}/tour/${tour.slug}`,
+    //     customer_email: req.user.email,
+    //     client_reference_id: req.params.tourID,
+    //     mode: 'payment',
+    //     line_items: [
+    //         {
+    //             price: price.id,
+    //             quantity: 1,
+    //         },
+    //     ],
+    // })
     // DEPRECATED
     // stripe.checkout.sessions.create({
     //     payment_method_types: ['card'],
@@ -101,11 +126,10 @@ exports.webhooCheckout = (req, res, next) => {
             signature, 
             process.env.STRIPE_WEBHOOD_SECRET
         )
-
     } catch (error) {
         return res
             .status(400)
-            .send(`Webhood error: ${err.message}`)
+            .send(`Webhook error: ${err.message}`)
     }
 
     if (event.type === 'checkout.session.completed') {
