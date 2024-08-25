@@ -5,7 +5,8 @@ const {
     getLoginForm,
     getAccount,
     updateUserData,
-    getMyTours
+    getMyTours,
+    alerts
 } = require('../controllers/viewsController')
 const { 
     isLoggedIn, protect 
@@ -13,6 +14,8 @@ const {
 const { createBookingCheckout } = require('../controllers/bookingController.js')
 
 const router = express.Router()
+
+router.use(alerts)
 
 // router.use(isLoggedIn)
 
