@@ -17,7 +17,7 @@ const userRouter = require(`./routes/userRoute`)
 const reviewRouter = require(`./routes/reviewRoute`)
 const viewRouter = require(`./routes/viewRoutes`)
 const bookingRouter = require(`./routes/bookingRoutes`)
-const { webhooCheckout } = require('./controllers/bookingController.js')
+const { webhooCheckout } = require('./controllers/bookingController')
 
 
 const app = express()

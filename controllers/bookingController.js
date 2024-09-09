@@ -1,10 +1,9 @@
 const Stripe = require('stripe')
 const Tour = require('../models/tourModels')
-const Booking = require('../models/bookingModel.js')
-const AppError = require('../utils/AppError')
+const Booking = require('../models/bookingModel')
 const catchAsync = require('../utils/catchAsync')
 const factory = require('./handlerFactory')
-const User = require('../models/userModel.js')
+const User = require('../models/userModel')
 
 const stripe = Stripe((process.env.STRIPE_SECRET_KEY))
 
@@ -138,7 +137,7 @@ exports.webhooCheckout = (req, res, next) => {
         // if (event.type === 'checkout.session.completed') {
         //     createBookingCheckout(event.data.object)
         // }
-    } catch (error) {
+    } catch (err) {
         return res
             .status(400)
             .send(`Webhook error: ${err.message}`)
@@ -159,7 +158,7 @@ exports.webhooCheckout = (req, res, next) => {
             .status(200)
             .json({received: true})
 
-    } catch (error) {
+    } catch (err) {
         return res
             .status(400)
             .send(`Booking creator Err: ${err.message}`)
