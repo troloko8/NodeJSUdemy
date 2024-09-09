@@ -27,6 +27,10 @@ app.enable('trust proxy')
 app.set('view engine', 'pug')
 app.set('views', path.join(__dirname, 'views'))
 
+app.use(cors({
+  origin: 'http://localhost:3000', // Allow requests from React frontend
+}))
+
 // Serving static files
 // app.use(express.static(`${__dirname}/public`)) // sets up a new root folder for URL row // work for static files
 app.use(express.static(path.join(__dirname, 'public'))) // sets up a new root folder for URL row // work for static files
@@ -96,6 +100,7 @@ app.use((req, res, next) => {
 
 // 3) ROUTES
 
+//FIXME DELETE all view routes // comment
 app.use('/', viewRouter)
 app.use('/api/v1/tours', tourRouter)
 app.use('/api/v1/users', userRouter)
