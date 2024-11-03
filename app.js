@@ -36,7 +36,7 @@ app.use(cors({
 app.use(express.static(path.join(__dirname, 'public'))) // sets up a new root folder for URL row // work for static files
 
 // 1)GLOBAL MIDDLWARES
-// Implement CORS
+// Implctaement CORS
 app.use(cors()) // Acces-Control-Allow-Origin all 
 // examaple: api.natours.com (main) natours.com(FrontEnd) solution: 
 // app.use(cors({
@@ -56,7 +56,7 @@ if (process.env.NODE_ENV === 'development') {
 
 // limiter for max request from one IP
 const limiter = rateLimit({
-    max: 100,
+    max: 1000,
     windowMs: 60 * 60 * 1000,
     message: "Too many requests from this IP please try again in an hour!"
 })
